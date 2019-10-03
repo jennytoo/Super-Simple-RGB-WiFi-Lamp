@@ -1,3 +1,10 @@
+#include <Arduino.h>
+#include <ArduinoJson.h>
+#include <FS.h>
+#include "globals.h"
+
+void saveConfigItem(JsonDocument& jsonSetting);
+
 // Check if the flash size set in the IDE is the same as the onboard chip
 bool checkFlashConfig() {
   //  Set bool pesimistically 

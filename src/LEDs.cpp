@@ -1,3 +1,68 @@
+#include <Arduino.h>
+#include <FastLED.h>
+#include "globals.h"
+
+// Set up LED's for each side - These arrays hold which leds are on what sides. For the basic rectangular shape in the example this relates to 4
+// sides and 4 arrays. You must subract 1 off the count of the LED when entering it as the array is 0 based. For example the first LED on the
+// string is entered as 0.
+int topLeds[]     = {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47};
+int bottomLeds[]  = {14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51};
+int leftLeds[]    = {48, 49, 50};
+int rightLeds[]   = {15, 16, 17};
+
+// LED string object and Variables
+CRGB ledString[NUM_LEDS];
+int topNumLeds      = sizeof(topLeds) / sizeof(*topLeds);
+int bottomNumLeds   = sizeof(bottomLeds) / sizeof(*bottomLeds);
+int leftNumLeds     = sizeof(leftLeds) / sizeof(*leftLeds);
+int rightNumLeds    = sizeof(rightLeds) / sizeof(*rightLeds);
+
+String  Mode                  = "";                                   // The default Mode of the Device
+bool    State                 = true;                                 // The Default Mode of the Light
+int     FadeTime              = 200;                                  // Fading time between states in ms
+String  currentMode           = Mode;                                 // Placeholder variable for changing mode
+String  previousMode          = "";                                   // Placeholder variable for changing mode
+bool    previousState         = false;                                // Placeholder variable for changing state
+float   modeChangeFadeAmount  = 0;                                    // Place holder for global brightness during mode change
+
+// Colour Mode Variables
+int colourRed                     = 128;
+int colourGreen                   = 128;
+int colourBlue                    = 128;
+
+// Rainbow Mode Variables
+int rainbowStartHue               = 0;
+int rainbowSpeed                  = 10;
+int rainbowBri                    = 100;
+float rainbowAddedHue             = 0;
+
+// Clock Mode Variables
+int clockHourRed                  = 128;
+int clockHourGreen                = 128;
+int clockHourBlue                 = 128;
+int clockMinRed                   = 128;
+int clockMinGreen                 = 128;
+int clockMinBlue                  = 128;
+int clockOnPauseBrightness        = 255;
+//unsigned long lastClockExecution  = 0;
+
+// Bell Curve Mode Variables
+int bellCurveRed                  = 128;
+int bellCurveGreen                = 128;
+int bellCurveBlue                 = 128;
+
+// Night Rider Mode Variables
+int nightRiderTopLedNumber        = 0;
+int nightRiderBottomLedNumber     = 0;
+int nightRiderTopIncrement        = 1;
+int nightRiderBottomIncrement     = 1;
+
+void setColour(int red, int green, int blue);
+void setRainbow(int startHue, int speed, int brightness);
+void setClock();
+void setBellCurve();
+void setNightRider();
+
 void ledStringInit() {
   // add the leds to fast led and clear them
   FastLED.addLeds<WS2812, DATA_PIN, GRB>(ledString, NUM_LEDS);

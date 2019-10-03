@@ -1,3 +1,13 @@
+#include <Arduino.h>
+#include <WebSocketsServer.h>
+#include "globals.h"
+
+bool clientNeedsUpdate = false;
+bool processingMessage = false;
+WebSocketsServer webSocket(81);
+
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length);
+
 void websocketsInit() {
   // Start the WS Server
   webSocket.begin();
@@ -63,7 +73,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload, size_t length)
   }
 }
 
-bool websocketSend(JsonDocument& jsonMessage) {
+void websocketSend(JsonDocument& jsonMessage) {
   // Serialize the string
   String buffer;
   serializeJson(jsonMessage, buffer); 
@@ -73,7 +83,7 @@ bool websocketSend(JsonDocument& jsonMessage) {
   webSocket.broadcastTXT(buffer.c_str());
 }
 
-bool updateClients() {
+void updateClients() {
   // Send the current values of everything to the clients when one connects
   if (clientNeedsUpdate){
     // Debug 

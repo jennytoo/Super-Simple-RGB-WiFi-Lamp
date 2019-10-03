@@ -1,3 +1,20 @@
+#include <Arduino.h>
+#include "globals.h"
+
+AsyncUDP udpClient;
+bool ntpTimeSet                       = false;
+String ntpHostName                    = "pool.ntp.org";
+IPAddress ntpIpAddress                = IPAddress(0, 0, 0, 0);
+unsigned long utcOffset               = UTC_OFFSET * 3600; // in seconds
+unsigned long collectionPeriod        = 3600;
+unsigned long currentEpochTime        = 0;
+unsigned long lastNTPCollectionTime   = 0;
+
+bool getNTPServerIP(const char *_ntpServerName, IPAddress &_ntpServerIp);
+bool sendNTPRequest();
+void parseNTPResponse(uint8_t *_ntpData);
+String get12hrAsString();
+
 void handleNTP() {
   // Change the bool after a waiting period
   if ( millis() - lastNTPCollectionTime > collectionPeriod ) ntpTimeSet = false;

@@ -1,0 +1,89 @@
+// Included Libraries
+#define FASTLED_ESP8266_RAW_PIN_ORDER
+#include <Arduino.h>
+#include <FastLED.h>
+#include "FS.h"
+#include <ESP8266WiFi.h>
+#include "IPAddress.h"
+#include <DNSServer.h>
+#include <ESP8266mDNS.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266HTTPUpdateServer.h>
+#include <ESPAsyncTCP.h>
+#include <WebSocketsServer.h>
+#include <ArduinoJson.h>
+#include <TimeLib.h>
+#include <ESPAsyncUDP.h>
+#include "lwip/inet.h"
+#include "lwip/dns.h"
+
+#include "globals.h"
+
+String  Name                  = DEFAULT_NAME;                         // The default Name of the Device
+
+bool spiffsCorrectSize      = false;
+
+// Setup Method - Runs only once before the main loop. Useful for setting things up
+void setup() {
+  // Add a short delay on start
+  delay(1000);
+
+  // Start Serial
+  //Serial.begin(115200);
+  Serial.begin(9600);
+  Serial.println();
+
+  // Check if the flash has been set up correctly
+  spiffsCorrectSize = checkFlashConfig();
+  if (spiffsCorrectSize) {
+    // Init the LED's
+    ledStringInit();
+
+    // Get saved settings
+    getConfig();
+
+    // Start Wifi
+    wifiInit();
+
+    // Setup Webserver
+    webServerInit();
+
+    // Setup websockets
+    websocketsInit();
+  }
+  else Serial.println("[setup] -  Flash configuration was not set correctly. Please check your settings under \"tools->flash size:\"");
+}
+
+// The Main Loop Methdo - This runs continuously
+void loop() {
+  // Check if the flash was correctly setup
+  if (spiffsCorrectSize) {
+    // Handle the captive portal 
+    captivePortalDNS.processNextRequest();
+
+    // Handle mDNS 
+    MDNS.update();
+
+    // // Handle the webserver
+    restServer.handleClient();
+    
+    // Handle Websockets
+    webSocket.loop();
+
+    // Get the time when needed
+    handleNTP();
+
+    // Update WS clients when needed
+    updateClients();
+
+    // Handle the wifi connection 
+    handleWifiConnection();
+
+    // Update the LED's
+    handleMode();
+  }
+  else {
+    delay(10000);
+    Serial.println("[loop] - Flash configuration was not set correctly. Please check your settings under \"tools->flash size:\"");
+  }
+}

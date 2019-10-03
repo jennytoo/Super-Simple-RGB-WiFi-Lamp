@@ -1,3 +1,14 @@
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include "globals.h"
+
+void otaInit();
+void servePage();
+
+// Webserver and OTA Objects
+ESP8266WebServer restServer(80);
+ESP8266HTTPUpdateServer OTAServer;
+
 void webServerInit() {
   // Set the URI's of the server
   restServer.onNotFound(servePage);

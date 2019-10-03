@@ -1,3 +1,26 @@
+#include <Arduino.h>
+#include "globals.h"
+
+bool wifiStarting           = false;
+bool softApStarted          = false;
+IPAddress accessPointIP     = IPAddress(192, 168, 1, 1);
+WiFiEventHandler stationConnectedHandler;
+WiFiEventHandler stationDisconnectedHandler;
+
+// Eneter your wifi credentials here - If you would like to enter your wifi credentials now you can with these variables. This is a nice easy
+// method to get your ESP8266 connected to your network quickly. If you dont you can always set it up later in the wifi portal.
+String SSID = "";
+String Password = "";
+
+// Wifi Variables and Objects
+String programmedSSID       = SSID;
+String programmedPassword   = Password;
+
+DNSServer captivePortalDNS;
+
+void onWifiConnected(const WiFiEventStationModeGotIP &event);
+void onWifiDisconnected(const WiFiEventStationModeDisconnected &event);
+
 // Wifi Methods
 void wifiInit() {
   // Make sure the wifi does not autoconnect but always reconnects

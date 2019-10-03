@@ -1,3 +1,9 @@
+#include <Arduino.h>
+#include "globals.h"
+#include <ESP8266mDNS.h>
+
+MDNSResponder::hMDNSService mdnsService;
+
 // mDNS Methods
 void mdnsInit() {
   // Create host name
