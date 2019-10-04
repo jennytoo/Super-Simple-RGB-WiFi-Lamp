@@ -19,12 +19,15 @@
 
 #include "globals.h"
 
-String  Name                  = DEFAULT_NAME;                         // The default Name of the Device
+String Name = DEFAULT_NAME; // The default Name of the Device
 
-bool spiffsCorrectSize      = false;
+bool spiffsCorrectSize = false;
+
+WifiModule *wifiModule = new WifiModule();
 
 // Setup Method - Runs only once before the main loop. Useful for setting things up
-void setup() {
+void setup()
+{
   // Add a short delay on start
   delay(1000);
 
@@ -35,7 +38,8 @@ void setup() {
 
   // Check if the flash has been set up correctly
   spiffsCorrectSize = checkFlashConfig();
-  if (spiffsCorrectSize) {
+  if (spiffsCorrectSize)
+  {
     // Init the LED's
     ledStringInit();
 
@@ -43,7 +47,7 @@ void setup() {
     getConfig();
 
     // Start Wifi
-    wifiInit();
+    wifiModule->setup();
 
     // Setup Webserver
     webServerInit();
@@ -51,22 +55,25 @@ void setup() {
     // Setup websockets
     websocketsInit();
   }
-  else Serial.println("[setup] -  Flash configuration was not set correctly. Please check your settings under \"tools->flash size:\"");
+  else
+    Serial.println("[setup] -  Flash configuration was not set correctly. Please check your settings under \"tools->flash size:\"");
 }
 
 // The Main Loop Methdo - This runs continuously
-void loop() {
+void loop()
+{
   // Check if the flash was correctly setup
-  if (spiffsCorrectSize) {
-    // Handle the captive portal 
+  if (spiffsCorrectSize)
+  {
+    // Handle the captive portal
     captivePortalDNS.processNextRequest();
 
-    // Handle mDNS 
+    // Handle mDNS
     MDNS.update();
 
     // // Handle the webserver
     restServer.handleClient();
-    
+
     // Handle Websockets
     webSocket.loop();
 
@@ -76,13 +83,14 @@ void loop() {
     // Update WS clients when needed
     updateClients();
 
-    // Handle the wifi connection 
-    handleWifiConnection();
+    // Handle the wifi connection
+    wifiModule->loop();
 
     // Update the LED's
     handleMode();
   }
-  else {
+  else
+  {
     delay(10000);
     Serial.println("[loop] - Flash configuration was not set correctly. Please check your settings under \"tools->flash size:\"");
   }

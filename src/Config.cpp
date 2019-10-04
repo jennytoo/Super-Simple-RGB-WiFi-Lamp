@@ -3,11 +3,12 @@
 #include <FS.h>
 #include "globals.h"
 
-void saveConfigItem(JsonDocument& jsonSetting);
+void saveConfigItem(JsonDocument &jsonSetting);
 
 // Check if the flash size set in the IDE is the same as the onboard chip
-bool checkFlashConfig() {
-  //  Set bool pesimistically 
+bool checkFlashConfig()
+{
+  //  Set bool pesimistically
   bool flashSizeCorrect = false;
 
   // Get actual flash size and size set in IDE
@@ -15,24 +16,30 @@ bool checkFlashConfig() {
   uint32_t ideSize = ESP.getFlashChipSize();
 
   // Compare the two
-  if (realSize >= ideSize) {
+  if (realSize >= ideSize)
+  {
     // Get info about the SPIFFS
-    if (SPIFFS.begin()) {
+    if (SPIFFS.begin())
+    {
       FSInfo fs_info;
       SPIFFS.info(fs_info);
-      if (fs_info.totalBytes != 0) {
+      if (fs_info.totalBytes != 0)
+      {
         // Change the boolean to true if the config is ok
         flashSizeCorrect = true;
       }
-      else {
+      else
+      {
         Serial.println("[checkFlashConfig] - SPIFFS size was set to 0, please select a SPIFFS size from the \"tools->flash size:\" menu");
       }
     }
-    else {
+    else
+    {
       Serial.println("[checkFlashConfig] - SPIFFS size was set to 0, please select a SPIFFS size from the \"tools->flash size:\" menu");
     }
   }
-  else {
+  else
+  {
     // Tell the user the flash is incorrect if it is not
     Serial.println("[checkFlashConfig] - Flash chip set to the incorrect size, correct size is; " + String(realSize));
   }
@@ -42,115 +49,142 @@ bool checkFlashConfig() {
 }
 
 // Get the config file from the flash chip
-void getConfig() {
+void getConfig()
+{
   // Check if flash is configured correctly
-  if (checkFlashConfig()) {
+  if (checkFlashConfig())
+  {
     // Mount the file system
-    if (SPIFFS.begin()) {
+    if (SPIFFS.begin())
+    {
       // Check if the file exists
-      if (SPIFFS.exists("/DeviceConfig.json")) {
+      if (SPIFFS.exists("/DeviceConfig.json"))
+      {
         // Open file in read only mode and check if it opened correctly
         File deviceConfigFile = SPIFFS.open("/DeviceConfig.json", "r");
-        if (deviceConfigFile) {
+        if (deviceConfigFile)
+        {
           // Get size of file and allocate memory
           size_t size = deviceConfigFile.size();
           char filebuffer[size];
           deviceConfigFile.readBytes(filebuffer, size);
 
           // Create JSON buffer and parse file
-          DynamicJsonDocument jsonDocument(1024); 
+          DynamicJsonDocument jsonDocument(1024);
           DeserializationError jsonError = deserializeJson(jsonDocument, filebuffer);
 
           // Check if file parsed correctly and decode
-          if (!jsonError) {
+          if (!jsonError)
+          {
             parseConfig(jsonDocument, false);
           }
-          else {
+          else
+          {
             Serial.print("[getConfig] - deserializeJson() failed: ");
             Serial.println(jsonError.c_str());
           }
         }
-        else {
+        else
+        {
           Serial.println("[getConfig] - Failed to open device config file");
         }
       }
-      else {
+      else
+      {
         // Create a new config file if none exists and pre populate
         Serial.println("[getConfig] - No Device Config file found, creating new one");
-        DynamicJsonDocument jsonDocument(1024); 
+        DynamicJsonDocument jsonDocument(1024);
         jsonDocument["Name"] = Name;
         jsonDocument["Mode"] = Mode;
         jsonDocument["State"] = State;
-        jsonDocument["Wifi"]["SSID"] = programmedSSID;
-        jsonDocument["Wifi"]["Password"] = programmedPassword;
+        jsonDocument["Wifi"]["SSID"] = wifiModule->programmedSSID;
+        jsonDocument["Wifi"]["Password"] = wifiModule->programmedPassword;
         saveConfigItem(jsonDocument);
       }
     }
-    else Serial.println("[getConfig] - Failed to mount FS");
+    else
+      Serial.println("[getConfig] - Failed to mount FS");
   }
-  else Serial.println("[getConfig] - Could not get parameters due to incorrect IDE flash settings");
+  else
+    Serial.println("[getConfig] - Could not get parameters due to incorrect IDE flash settings");
 }
 
-bool sendConfigViaWS() {
-    // Check if flash is configured correctly
-  if (checkFlashConfig()) {
+bool sendConfigViaWS()
+{
+  // Check if flash is configured correctly
+  if (checkFlashConfig())
+  {
     // Mount the file system
-    if (SPIFFS.begin()) {
+    if (SPIFFS.begin())
+    {
       // Check if the file exists
-      if (SPIFFS.exists("/DeviceConfig.json")) {
+      if (SPIFFS.exists("/DeviceConfig.json"))
+      {
         // Open file in read only mode and check if it opened correctly
         File deviceConfigFile = SPIFFS.open("/DeviceConfig.json", "r");
-        if (deviceConfigFile) {
+        if (deviceConfigFile)
+        {
           // Get size of file and allocate memory
           size_t size = deviceConfigFile.size();
           char filebuffer[size];
           deviceConfigFile.readBytes(filebuffer, size);
 
           // Parse the file
-          DynamicJsonDocument jsonDocument(1024); 
+          DynamicJsonDocument jsonDocument(1024);
           DeserializationError jsonError = deserializeJson(jsonDocument, filebuffer);
 
           // Check if file parsed correctly and decode
-          if (!jsonError) {
+          if (!jsonError)
+          {
             parseConfig(jsonDocument, true);
             return true;
           }
-          else {
+          else
+          {
             Serial.print("[getConfigAsDocument] - deserializeJson() failed: ");
             Serial.println(jsonError.c_str());
           }
         }
-        else Serial.println("[getConfigAsDocument] - Failed to open device config file");
+        else
+          Serial.println("[getConfigAsDocument] - Failed to open device config file");
       }
-      else Serial.println("[getConfigAsDocument] - Device config file does not exist");
+      else
+        Serial.println("[getConfigAsDocument] - Device config file does not exist");
     }
-    else Serial.println("[getConfigAsDocument] - Failed to mount FS");
+    else
+      Serial.println("[getConfigAsDocument] - Failed to mount FS");
   }
-  else Serial.println("[getConfigAsDocument] - Could not get parameters due to incorrect IDE flash settings");
+  else
+    Serial.println("[getConfigAsDocument] - Could not get parameters due to incorrect IDE flash settings");
 
   return false;
 }
 
 // Save a specific config item parsed to JSON
-void saveConfigItem(JsonDocument& jsonSetting) {
+void saveConfigItem(JsonDocument &jsonSetting)
+{
   // Debug
   // Serial.print("[saveConfigItem] - Incoming Document is: ");
   // serializeJson(jsonSetting, Serial);
   // Serial.println();
 
   // Check if the flash is configured correctly
-  if (checkFlashConfig()) {
+  if (checkFlashConfig())
+  {
     // Mount the file system
-    if (SPIFFS.begin()) {
+    if (SPIFFS.begin())
+    {
       // Start a json buffer
       String stringBuffer;
-      DynamicJsonDocument currentjsonDocument(1024); 
+      DynamicJsonDocument currentjsonDocument(1024);
       File deviceConfigFile;
 
       // Read the contents of the current file
-      if (SPIFFS.exists("/DeviceConfig.json")) {
+      if (SPIFFS.exists("/DeviceConfig.json"))
+      {
         deviceConfigFile = SPIFFS.open("/DeviceConfig.json", "r");
-        if (deviceConfigFile) {
+        if (deviceConfigFile)
+        {
           // Get size of file and allocate memory
           size_t size = deviceConfigFile.size();
           char filebuffer[size];
@@ -158,13 +192,15 @@ void saveConfigItem(JsonDocument& jsonSetting) {
 
           // Create JSON buffer and parse file
           DeserializationError jsonError = deserializeJson(currentjsonDocument, filebuffer);
-          if (!jsonError) {
+          if (!jsonError)
+          {
             serializeJson(currentjsonDocument, stringBuffer);
             // Serial.print("Stored Document is currently: ");
             // serializeJson(currentjsonDocument, Serial);
             // Serial.println();
           }
-          else {
+          else
+          {
             Serial.print(F("[saveConfigItem] - Deserialize Json failed: "));
             Serial.println(jsonError.c_str());
           }
@@ -173,16 +209,20 @@ void saveConfigItem(JsonDocument& jsonSetting) {
           deviceConfigFile.close();
         }
       }
-      else Serial.println("[saveConfigItem] - No Device Config file found");
+      else
+        Serial.println("[saveConfigItem] - No Device Config file found");
 
       // Modify and write the updated contents back to file
       deviceConfigFile = SPIFFS.open("/DeviceConfig.json", "w");
-      if (deviceConfigFile) {
+      if (deviceConfigFile)
+      {
         // Deserilise json from string
-        if (stringBuffer != "") DeserializationError jsonError = deserializeJson(currentjsonDocument, stringBuffer);
+        if (stringBuffer != "")
+          DeserializationError jsonError = deserializeJson(currentjsonDocument, stringBuffer);
 
         // Put all keys from the new object into the old settings object - will overide existing values
-        for (auto kvp : jsonSetting.as<JsonObject>()) { 
+        for (auto kvp : jsonSetting.as<JsonObject>())
+        {
           currentjsonDocument[kvp.key()] = kvp.value();
         }
 
@@ -207,7 +247,8 @@ void saveConfigItem(JsonDocument& jsonSetting) {
 }
 
 // Generic message parser
-void parseConfig(JsonDocument& jsonMessage, bool sendViaWebsockets) {
+void parseConfig(JsonDocument &jsonMessage, bool sendViaWebsockets)
+{
   // Config Parameters
   /*
   {
@@ -251,11 +292,11 @@ void parseConfig(JsonDocument& jsonMessage, bool sendViaWebsockets) {
       "Password": "Test"
     }
   }
-  */  
+  */
 
   // Debug
   // Serial.println();
-  // Serial.print("[parseConfig] - Incoming JSON document is: "); 
+  // Serial.print("[parseConfig] - Incoming JSON document is: ");
   // serializeJson(jsonMessage, Serial);
   // Serial.println();
 
@@ -267,47 +308,53 @@ void parseConfig(JsonDocument& jsonMessage, bool sendViaWebsockets) {
   jsonSettingsObject["Mode"] = Mode = jsonSettingsObject["Mode"] | Mode;
   jsonSettingsObject["State"] = State = jsonSettingsObject["State"] | State;
   jsonSettingsObject["Fade Time"] = FadeTime = jsonSettingsObject["Fade Time"] | FadeTime;
-  
+
   // Might need to reconnect wifi with Name change
 
   // Check for Wifi Settings
   JsonVariant wifiSettings = jsonSettingsObject["Wifi"];
-  if (wifiSettings) {
-      String pssidBuffer = wifiSettings["PSSID"] | programmedSSID;
-      if (pssidBuffer == programmedSSID && wifiSettings.containsKey("SSID")) {
-        String ssidBuffer = wifiSettings["SSID"] | SSID;
-        String passBuffer = wifiSettings["Password"] | Password;
+  if (wifiSettings)
+  {
+    String pssidBuffer = wifiSettings["PSSID"] | wifiModule->programmedSSID;
+    if (pssidBuffer == wifiModule->programmedSSID && wifiSettings.containsKey("SSID"))
+    {
+      String ssidBuffer = wifiSettings["SSID"] | wifiModule->SSID;
+      String passBuffer = wifiSettings["Password"] | wifiModule->Password;
 
-        wifiSettings["SSID"] = SSID = (SSID != ssidBuffer) ? ssidBuffer : SSID;
-        wifiSettings["Password"] = Password = (Password != passBuffer) ? passBuffer : Password;
-        wifiSettings["PSSID"] = programmedSSID;
-      }
-      else if (pssidBuffer != programmedSSID) {
-        wifiSettings["SSID"] = SSID = programmedSSID;
-        wifiSettings["Password"] = Password = programmedPassword;
-        wifiSettings["PSSID"] = programmedSSID;
-      }
+      wifiSettings["SSID"] = wifiModule->SSID = (wifiModule->SSID != ssidBuffer) ? ssidBuffer : wifiModule->SSID;
+      wifiSettings["Password"] = wifiModule->Password = (wifiModule->Password != passBuffer) ? passBuffer : wifiModule->Password;
+      wifiSettings["PSSID"] = wifiModule->programmedSSID;
+    }
+    else if (pssidBuffer != wifiModule->programmedSSID)
+    {
+      wifiSettings["SSID"] = wifiModule->SSID = wifiModule->programmedSSID;
+      wifiSettings["Password"] = wifiModule->Password = wifiModule->programmedPassword;
+      wifiSettings["PSSID"] = wifiModule->programmedSSID;
+    }
 
-      if (wifiSettings.containsKey("Rescan")) {
-        // Scan and wifi here
-        scanForNetworks();
+    if (wifiSettings.containsKey("Rescan"))
+    {
+      // Scan and wifi here
+      scanForNetworks();
 
-        // Remove the object to not store it
-        wifiSettings.remove("Rescan");
-      }
+      // Remove the object to not store it
+      wifiSettings.remove("Rescan");
+    }
   }
 
   // Check for colour settings
   JsonVariant colourSettings = jsonSettingsObject["Colour"];
-  if (colourSettings) {
+  if (colourSettings)
+  {
     colourSettings["Red"] = colourRed = colourSettings["Red"] | colourRed;
-    colourSettings["Green"]= colourGreen = colourSettings["Green"] | colourGreen;
+    colourSettings["Green"] = colourGreen = colourSettings["Green"] | colourGreen;
     colourSettings["Blue"] = colourBlue = colourSettings["Blue"] | colourBlue;
   }
 
   // Check for Rainbow Settings
   JsonVariant rainbowSettings = jsonSettingsObject["Rainbow"];
-  if (rainbowSettings) {
+  if (rainbowSettings)
+  {
     rainbowSettings["Hue"] = rainbowStartHue = rainbowSettings["Hue"] | rainbowStartHue;
     rainbowSettings["Speed"] = rainbowSpeed = rainbowSettings["Speed"] | rainbowSpeed;
     rainbowSettings["Brightness"] = rainbowBri = rainbowSettings["Brightness"] | rainbowBri;
@@ -315,43 +362,49 @@ void parseConfig(JsonDocument& jsonMessage, bool sendViaWebsockets) {
 
   // Check for clock settings
   JsonVariant clockSettings = jsonSettingsObject["Clock"];
-  if (clockSettings) {
-    if (clockSettings.containsKey("Epoch")){
-      clockSettings["Epoch"]  = currentEpochTime = clockSettings["Epoch"] | currentEpochTime;
+  if (clockSettings)
+  {
+    if (clockSettings.containsKey("Epoch"))
+    {
+      clockSettings["Epoch"] = currentEpochTime = clockSettings["Epoch"] | currentEpochTime;
       setTime(currentEpochTime);
     }
 
     JsonVariant hourColourSettings = clockSettings["hourColour"];
-    if (hourColourSettings) {
+    if (hourColourSettings)
+    {
       hourColourSettings["Red"] = clockHourRed = hourColourSettings["Red"] | clockHourRed;
       hourColourSettings["Green"] = clockHourGreen = hourColourSettings["Green"] | clockHourGreen;
       hourColourSettings["Blue"] = clockHourBlue = hourColourSettings["Blue"] | clockHourBlue;
     }
 
     JsonVariant minColourSettings = clockSettings["minColour"];
-    if (minColourSettings) {
+    if (minColourSettings)
+    {
       minColourSettings["Red"] = clockMinRed = minColourSettings["Red"] | clockMinRed;
       minColourSettings["Green"] = clockMinGreen = minColourSettings["Green"] | clockMinGreen;
-      minColourSettings["Blue"]  = clockMinBlue = minColourSettings["Blue"] | clockMinBlue;
+      minColourSettings["Blue"] = clockMinBlue = minColourSettings["Blue"] | clockMinBlue;
     }
   }
 
   // Check for bell curve settings
   JsonVariant bellCurveSettings = jsonSettingsObject["Bell Curve"];
-  if (bellCurveSettings) {
+  if (bellCurveSettings)
+  {
     bellCurveSettings["Red"] = bellCurveRed = bellCurveSettings["Red"] | bellCurveRed;
-    bellCurveSettings["Green"]= bellCurveGreen = bellCurveSettings["Green"] | bellCurveGreen;
+    bellCurveSettings["Green"] = bellCurveGreen = bellCurveSettings["Green"] | bellCurveGreen;
     bellCurveSettings["Blue"] = bellCurveBlue = bellCurveSettings["Blue"] | bellCurveBlue;
   }
 
   // Check for night rider settings
   JsonVariant nightRiderSettings = jsonSettingsObject["Night Rider"];
-  if (nightRiderSettings) {
+  if (nightRiderSettings)
+  {
     // Currently no Night Rider Settings
   }
 
   // Debug
-  // Serial.print("[parseConfig] - Final JSON document is: "); 
+  // Serial.print("[parseConfig] - Final JSON document is: ");
   // serializeJson(jsonMessage, Serial);
   // Serial.println();
 
@@ -359,5 +412,6 @@ void parseConfig(JsonDocument& jsonMessage, bool sendViaWebsockets) {
   saveConfigItem(jsonMessage);
 
   // Send the message via websockets
-  if (sendViaWebsockets) websocketSend(jsonMessage);
+  if (sendViaWebsockets)
+    websocketSend(jsonMessage);
 }

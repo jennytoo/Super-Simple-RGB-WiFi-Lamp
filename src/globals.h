@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _GLOBALS_H_
+#define _GLOBALS_H_
 
 // Included Libraries
 //#define FASTLED_ESP8266_RAW_PIN_ORDER
@@ -19,21 +20,22 @@
 //#include "lwip/inet.h"
 //#include "lwip/dns.h"
 
+#include "Wifi.h"
+extern WifiModule *wifiModule;
+
 void scanForNetworks();
-void websocketSend(JsonDocument& jsonMessage);
+void websocketSend(JsonDocument &jsonMessage);
 void mdnsInit();
 bool checkFlashConfig();
-void wifiInit();
 void ledStringInit();
 void getConfig();
 void websocketsInit();
 void webServerInit();
-void handleWifiConnection();
 void handleMode();
 void handleNTP();
 void updateClients();
 void updateWifiConfigTable(int _numNetworks);
-void parseConfig(JsonDocument& jsonMessage, bool sendViaWebsockets);
+void parseConfig(JsonDocument &jsonMessage, bool sendViaWebsockets);
 bool sendConfigViaWS();
 
 // ############################################################# Sketch Variables #############################################################
@@ -59,13 +61,6 @@ extern int topLeds[];
 extern int bottomLeds[];
 extern int leftLeds[];
 extern int rightLeds[];
-
-// Eneter your wifi credentials here - If you would like to enter your wifi credentials now you can with these variables. This is a nice easy
-// method to get your ESP8266 connected to your network quickly. If you dont you can always set it up later in the wifi portal.
-extern String SSID;
-extern String Password;
-extern String programmedSSID;
-extern String programmedPassword;
 
 // DNS and mDNS Objects
 extern DNSServer captivePortalDNS;
@@ -96,14 +91,14 @@ extern int leftNumLeds;
 extern int rightNumLeds;
 
 // Base Variables of the Light
-extern String  Name;
-extern String  Mode;
-extern bool    State;
-extern int     FadeTime;
-extern String  currentMode;
-extern String  previousMode;
-extern bool    previousState;
-extern float   modeChangeFadeAmount;
+extern String Name;
+extern String Mode;
+extern bool State;
+extern int FadeTime;
+extern String currentMode;
+extern String previousMode;
+extern bool previousState;
+extern float modeChangeFadeAmount;
 
 // Colour Mode Variables
 extern int colourRed;
@@ -135,3 +130,4 @@ extern int nightRiderTopLedNumber;
 extern int nightRiderBottomLedNumber;
 extern int nightRiderTopIncrement;
 extern int nightRiderBottomIncrement;
+#endif
