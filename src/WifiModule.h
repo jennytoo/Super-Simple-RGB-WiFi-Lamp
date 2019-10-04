@@ -14,16 +14,19 @@ private:
     IPAddress accessPointIP;
     WiFiEventHandler stationConnectedHandler;
     WiFiEventHandler stationDisconnectedHandler;
+    DNSServer captivePortalDNS;
 
     void onWifiConnected(const WiFiEventStationModeGotIP &event);
     void onWifiDisconnected(const WiFiEventStationModeDisconnected &event);
 
 public:
-    WifiModule();
+    WifiModule(String defaultName);
     virtual void setup();
     virtual void loop();
 
     // Visible until a better solution is implemented
+
+    String defaultName;
 
     /**
      * Hard-coded default values

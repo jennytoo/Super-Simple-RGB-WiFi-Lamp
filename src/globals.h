@@ -20,7 +20,7 @@
 //#include "lwip/inet.h"
 //#include "lwip/dns.h"
 
-#include "Wifi.h"
+#include "WifiModule.h"
 extern WifiModule *wifiModule;
 
 void scanForNetworks();
@@ -62,8 +62,7 @@ extern int bottomLeds[];
 extern int leftLeds[];
 extern int rightLeds[];
 
-// DNS and mDNS Objects
-extern DNSServer captivePortalDNS;
+// mDNS Objects
 extern MDNSResponder::hMDNSService mdnsService;
 
 // Webserver and OTA Objects

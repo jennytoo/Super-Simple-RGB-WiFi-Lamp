@@ -1,15 +1,12 @@
 #include <Arduino.h>
 #include "globals.h"
-#include "Wifi.h"
+#include "WifiModule.h"
 
-// Not moved yet
-DNSServer captivePortalDNS;
-
-WifiModule::WifiModule()
+WifiModule::WifiModule(String defaultName) : accessPointIP(192, 168, 1, 1), captivePortalDNS()
 {
   wifiStarting = false;
   softApStarted = false;
-  accessPointIP = IPAddress(192, 168, 1, 1);
+  this->defaultName = defaultName;
   programmedSSID = SSID;
   programmedPassword = Password;
 }
@@ -30,7 +27,7 @@ void WifiModule::loop()
   if (!WiFi.isConnected() && !wifiStarting && SSID != "")
   {
     // Set the Host name to the device name
-    String hostName = Name != "" ? Name : DEFAULT_NAME;
+    String hostName = Name != "" ? Name : defaultName;
     hostName.replace(" ", "-");
 
     // Disconnect the WS if connected
@@ -64,7 +61,7 @@ void WifiModule::loop()
   else if (!softApStarted && SSID == "")
   {
     // Set the Host name to the device name
-    String hostName = Name != "" ? Name : DEFAULT_NAME;
+    String hostName = Name != "" ? Name : defaultName;
     hostName.replace(" ", "-");
 
     // Debug
@@ -76,13 +73,23 @@ void WifiModule::loop()
     // Start the wifi in soft AP mode only
     WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(accessPointIP, accessPointIP, IPAddress(255, 255, 255, 0));
-    WiFi.softAP(hostName);
+    if (Password != "")
+    {
+      WiFi.softAP(hostName, Password);
+    }
+    else
+    {
+      WiFi.softAP(hostName);
+    }
     softApStarted = true;
 
     // Set up captive DNS
     captivePortalDNS.start(53, "*", accessPointIP);
     captivePortalDNS.setErrorReplyCode(DNSReplyCode::NoError);
   }
+
+  // Handle the captive portal
+  captivePortalDNS.processNextRequest();
 };
 
 void WifiModule::onWifiConnected(const WiFiEventStationModeGotIP &event)

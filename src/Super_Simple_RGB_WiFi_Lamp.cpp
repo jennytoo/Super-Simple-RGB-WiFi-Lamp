@@ -23,7 +23,7 @@ String Name = DEFAULT_NAME; // The default Name of the Device
 
 bool spiffsCorrectSize = false;
 
-WifiModule *wifiModule = new WifiModule();
+WifiModule *wifiModule = new WifiModule(DEFAULT_NAME);
 
 // Setup Method - Runs only once before the main loop. Useful for setting things up
 void setup()
@@ -59,15 +59,12 @@ void setup()
     Serial.println("[setup] -  Flash configuration was not set correctly. Please check your settings under \"tools->flash size:\"");
 }
 
-// The Main Loop Methdo - This runs continuously
+// The Main Loop Method - This runs continuously
 void loop()
 {
   // Check if the flash was correctly setup
   if (spiffsCorrectSize)
   {
-    // Handle the captive portal
-    captivePortalDNS.processNextRequest();
-
     // Handle mDNS
     MDNS.update();
 
