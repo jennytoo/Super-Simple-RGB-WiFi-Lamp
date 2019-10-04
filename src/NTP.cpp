@@ -2,50 +2,60 @@
 #include "globals.h"
 
 AsyncUDP udpClient;
-bool ntpTimeSet                       = false;
-String ntpHostName                    = "pool.ntp.org";
-IPAddress ntpIpAddress                = IPAddress(0, 0, 0, 0);
-unsigned long utcOffset               = UTC_OFFSET * 3600; // in seconds
-unsigned long collectionPeriod        = 3600;
-unsigned long currentEpochTime        = 0;
-unsigned long lastNTPCollectionTime   = 0;
+bool ntpTimeSet = false;
+String ntpHostName = "pool.ntp.org";
+IPAddress ntpIpAddress = IPAddress(0, 0, 0, 0);
+unsigned long utcOffset = UTC_OFFSET * 3600; // in seconds
+unsigned long collectionPeriod = 3600;
+unsigned long currentEpochTime = 0;
+unsigned long lastNTPCollectionTime = 0;
 
 bool getNTPServerIP(const char *_ntpServerName, IPAddress &_ntpServerIp);
 bool sendNTPRequest();
 void parseNTPResponse(uint8_t *_ntpData);
 String get12hrAsString();
 
-void handleNTP() {
+void handleNTP()
+{
   // Change the bool after a waiting period
-  if ( millis() - lastNTPCollectionTime > collectionPeriod ) ntpTimeSet = false;
+  if (millis() - lastNTPCollectionTime > collectionPeriod)
+    ntpTimeSet = false;
 
-  // Check if the time needs to be updated 
-  if (!ntpTimeSet) {
+  // Check if the time needs to be updated
+  if (!ntpTimeSet)
+  {
 
     // Collect the current time if the wifi is connected
-    if (WiFi.isConnected()) {
+    if (WiFi.isConnected())
+    {
 
       // Get the IP Address of the nearest server
-      if (getNTPServerIP(ntpHostName.c_str(), ntpIpAddress)) {
-          sendNTPRequest();
+      if (getNTPServerIP(ntpHostName.c_str(), ntpIpAddress))
+      {
+        sendNTPRequest();
       }
     }
   }
 }
-bool getNTPServerIP(const char *_ntpServerName, IPAddress &_ntpServerIp) {
+bool getNTPServerIP(const char *_ntpServerName, IPAddress &_ntpServerIp)
+{
   // Probe the DNS for the IP Address of the NTP Server
-  if (!WiFi.hostByName(_ntpServerName, _ntpServerIp)) {
+  if (!WiFi.hostByName(_ntpServerName, _ntpServerIp))
+  {
     Serial.println("[getNTPServerIP] - Failed to lookup DNS results for NTP server \"" + String(_ntpServerName) + "\"");
     return false;
   }
-  else {
+  else
+  {
     // Serial.println("[getNTPServerIP] - DNS results for \"" + String(_ntpServerName) + "\" was " + _ntpServerIp.toString());
     return true;
   }
 }
-bool sendNTPRequest() {
+bool sendNTPRequest()
+{
   // Attempt to connect to NTP Server
-  if (udpClient.connect(ntpIpAddress, 123)) {
+  if (udpClient.connect(ntpIpAddress, 123))
+  {
     // Debug
     // Serial.println("[sendNTPRequest] - Connected to NTP server");
 
@@ -62,7 +72,8 @@ bool sendNTPRequest() {
     packetBuffer[15] = 52;
 
     // Send packet to NTP server and setup response handler
-    if (udpClient.write(packetBuffer, 48)) {
+    if (udpClient.write(packetBuffer, 48))
+    {
       // Debug
       // Serial.println("[sendNTPRequest] - Message sent to NTP server");
 
@@ -79,14 +90,17 @@ bool sendNTPRequest() {
       // Return true on send message
       return true;
     }
-    else Serial.println("[sendNTPRequest] - Message was not sent to NTP Server");
+    else
+      Serial.println("[sendNTPRequest] - Message was not sent to NTP Server");
   }
-  else Serial.println("[sendNTPRequest] - Could not connect to NTP Server");
+  else
+    Serial.println("[sendNTPRequest] - Could not connect to NTP Server");
 
   // Always return
   return false;
 }
-void parseNTPResponse(uint8_t *_ntpData) {
+void parseNTPResponse(uint8_t *_ntpData)
+{
   // Convert data to a unix time
   unsigned long highWord = word(_ntpData[40], _ntpData[41]);
   unsigned long lowWord = word(_ntpData[42], _ntpData[43]);
@@ -107,7 +121,8 @@ void parseNTPResponse(uint8_t *_ntpData) {
   // Debug
   Serial.println("[getTime] - Current time set to: " + get12hrAsString());
 }
-String get12hrAsString() {
+String get12hrAsString()
+{
   String hrStr = hourFormat12() < 10 ? "0" + String(hourFormat12()) : String(hourFormat12());
   String minStr = minute() < 10 ? "0" + String(minute()) : String(minute());
   String secStr = second() < 10 ? "0" + String(second()) : String(second());
