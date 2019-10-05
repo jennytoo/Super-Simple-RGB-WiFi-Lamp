@@ -1,21 +1,21 @@
 // Included Libraries
 #define FASTLED_ESP8266_RAW_PIN_ORDER
 #include <Arduino.h>
-#include <FastLED.h>
+//#include <FastLED.h>
 #include "FS.h"
-#include <ESP8266WiFi.h>
-#include "IPAddress.h"
-#include <DNSServer.h>
-#include <ESP8266mDNS.h>
+//#include <ESP8266WiFi.h>
+//#include "IPAddress.h"
+//#include <DNSServer.h>
+//#include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
-#include <ESPAsyncTCP.h>
+//#include <ESPAsyncTCP.h>
 #include <WebSocketsServer.h>
 #include <ArduinoJson.h>
-#include <TimeLib.h>
-#include <ESPAsyncUDP.h>
-#include "lwip/inet.h"
-#include "lwip/dns.h"
+//#include <TimeLib.h>
+//#include <ESPAsyncUDP.h>
+//#include "lwip/inet.h"
+//#include "lwip/dns.h"
 
 #include "globals.h"
 
@@ -65,10 +65,7 @@ void loop()
   // Check if the flash was correctly setup
   if (spiffsCorrectSize)
   {
-    // Handle mDNS
-    MDNS.update();
-
-    // // Handle the webserver
+    // Handle the webserver
     restServer.handleClient();
 
     // Handle Websockets

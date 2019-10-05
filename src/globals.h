@@ -4,18 +4,18 @@
 // Included Libraries
 //#define FASTLED_ESP8266_RAW_PIN_ORDER
 //#include <Arduino.h>
-#include <FastLED.h>
+//#include <FastLED.h>
 //#include "FS.h"
 //#include <ESP8266WiFi.h>
-#include "IPAddress.h"
-#include <DNSServer.h>
-#include <ESP8266mDNS.h>
+//#include "IPAddress.h"
+//#include <DNSServer.h>
+//#include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
 //#include <ESPAsyncTCP.h>
 #include <WebSocketsServer.h>
 #include <ArduinoJson.h>
-//#include <TimeLib.h>
+#include <TimeLib.h>
 #include <ESPAsyncUDP.h>
 //#include "lwip/inet.h"
 //#include "lwip/dns.h"
@@ -63,7 +63,7 @@ extern int leftLeds[];
 extern int rightLeds[];
 
 // mDNS Objects
-extern MDNSResponder::hMDNSService mdnsService;
+//extern MDNSResponder::hMDNSService mdnsService;
 
 // Webserver and OTA Objects
 extern ESP8266WebServer restServer;
@@ -73,7 +73,6 @@ extern ESP8266HTTPUpdateServer OTAServer;
 extern WebSocketsServer webSocket;
 
 // NTP Variables and Objects
-extern AsyncUDP udpClient;
 extern bool ntpTimeSet;
 extern String ntpHostName;
 extern IPAddress ntpIpAddress;
@@ -83,7 +82,6 @@ extern unsigned long currentEpochTime;
 extern unsigned long lastNTPCollectionTime;
 
 // LED string object and Variables
-extern CRGB ledString[NUM_LEDS];
 extern int topNumLeds;
 extern int bottomNumLeds;
 extern int leftNumLeds;

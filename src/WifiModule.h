@@ -2,8 +2,10 @@
 #define _WIFI_H_
 
 #include <Arduino.h>
-#include <IPAddress.h>
+#include <DNSServer.h>
+#include <ESP8266mDNS.h>
 #include <ESP8266WiFi.h>
+#include <IPAddress.h>
 #include "AbstractModule.h"
 
 class WifiModule : public AbstractModule
@@ -15,9 +17,11 @@ private:
     WiFiEventHandler stationConnectedHandler;
     WiFiEventHandler stationDisconnectedHandler;
     DNSServer captivePortalDNS;
+    MDNSResponder::hMDNSService mdnsService; // Belongs in the service module, not here
 
     void onWifiConnected(const WiFiEventStationModeGotIP &event);
     void onWifiDisconnected(const WiFiEventStationModeDisconnected &event);
+    void mDNSInit(void);
 
 public:
     WifiModule(String defaultName);

@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include "globals.h"
 #include "WifiModule.h"
+#include "globals.h"
 
 WifiModule::WifiModule(String defaultName) : accessPointIP(192, 168, 1, 1), captivePortalDNS()
 {
@@ -90,7 +90,37 @@ void WifiModule::loop()
 
   // Handle the captive portal
   captivePortalDNS.processNextRequest();
+
+  // Handle mDNS
+  MDNS.update();
 };
+
+// mDNS Methods
+void WifiModule::mDNSInit()
+{
+  // Create host name
+  String hostName = Name != "" ? Name : DEFAULT_NAME;
+  hostName.replace(" ", "-");
+
+  // Try start the mDNS host
+  if (MDNS.begin(hostName))
+  {
+    // Debug
+    Serial.println("[startMdns] - Started MDNS responder at http://" + hostName + ".local/");
+
+    // Add an mDNS service to the mDNS host
+    if (!mdnsService)
+    {
+      mdnsService = MDNS.addService(0, "http", "tcp", 80);
+      if (mdnsService)
+        MDNS.addServiceTxt(mdnsService, "name", Name.c_str());
+    }
+    else
+      Serial.println("[startMdns] - mDNS Service already started");
+  }
+  else
+    Serial.println("[startMdns] - Failed to start MDNS responder as " + hostName + ".local");
+}
 
 void WifiModule::onWifiConnected(const WiFiEventStationModeGotIP &event)
 {
@@ -107,7 +137,7 @@ void WifiModule::onWifiConnected(const WiFiEventStationModeGotIP &event)
   captivePortalDNS.stop();
 
   // Start mDNS here
-  mdnsInit();
+  mDNSInit();
 
   // Stop the softAP
   WiFi.softAPdisconnect(true);
