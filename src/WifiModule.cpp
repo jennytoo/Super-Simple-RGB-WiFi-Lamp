@@ -26,66 +26,11 @@ void WifiModule::loop()
 {
   if (!WiFi.isConnected() && !wifiStarting && SSID != "")
   {
-    // Set the Host name to the device name
-    String hostName = Name != "" ? Name : defaultName;
-    hostName.replace(" ", "-");
-
-    // Disconnect the WS if connected
-    webSocket.disconnect();
-
-    // Disconnect the wifi - for stability
-    WiFi.disconnect();
-    WiFi.softAPdisconnect(false);
-
-    // Start in softAP and Station Mode
-    WiFi.mode(WIFI_AP_STA);
-
-    // Setup the softap
-    WiFi.softAPConfig(accessPointIP, accessPointIP, IPAddress(255, 255, 255, 0));
-    WiFi.softAP(hostName);
-
-    // Setup the station
-    WiFi.hostname(hostName);
-    (Password != "") ? WiFi.begin(SSID, Password) : WiFi.begin(SSID);
-
-    // Set the starting boolean
-    wifiStarting = true;
-
-    // Set up captive DNS
-    captivePortalDNS.start(53, "*", accessPointIP);
-    captivePortalDNS.setErrorReplyCode(DNSReplyCode::NoError);
-
-    // Debug
-    Serial.println("[handleWifiConnection] - Attempting connection to \"" + SSID + "\"");
+    startWifi();
   }
   else if (!softApStarted && SSID == "")
   {
-    // Set the Host name to the device name
-    String hostName = Name != "" ? Name : defaultName;
-    hostName.replace(" ", "-");
-
-    // Debug
-    Serial.println("[handleWifiConnection] - No SSID given starting the software AP");
-
-    // Disconnect the WS if connected
-    webSocket.disconnect();
-
-    // Start the wifi in soft AP mode only
-    WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(accessPointIP, accessPointIP, IPAddress(255, 255, 255, 0));
-    if (Password != "")
-    {
-      WiFi.softAP(hostName, Password);
-    }
-    else
-    {
-      WiFi.softAP(hostName);
-    }
-    softApStarted = true;
-
-    // Set up captive DNS
-    captivePortalDNS.start(53, "*", accessPointIP);
-    captivePortalDNS.setErrorReplyCode(DNSReplyCode::NoError);
+    startAP();
   }
 
   // Handle the captive portal
@@ -94,6 +39,71 @@ void WifiModule::loop()
   // Handle mDNS
   MDNS.update();
 };
+
+void WifiModule::startWifi()
+{
+  // Set the Host name to the device name
+  String hostName = Name != "" ? Name : defaultName;
+  hostName.replace(" ", "-");
+
+  // Disconnect the WS if connected
+  webSocket.disconnect();
+
+  // Disconnect the wifi - for stability
+  WiFi.disconnect();
+  WiFi.softAPdisconnect(false);
+
+  // Start in softAP and Station Mode
+  WiFi.mode(WIFI_AP_STA);
+
+  // Setup the softap
+  WiFi.softAPConfig(accessPointIP, accessPointIP, IPAddress(255, 255, 255, 0));
+  WiFi.softAP(hostName);
+
+  // Setup the station
+  WiFi.hostname(hostName);
+  (Password != "") ? WiFi.begin(SSID, Password) : WiFi.begin(SSID);
+
+  // Set the starting boolean
+  wifiStarting = true;
+
+  // Set up captive DNS
+  captivePortalDNS.start(53, "*", accessPointIP);
+  captivePortalDNS.setErrorReplyCode(DNSReplyCode::NoError);
+
+  // Debug
+  Serial.println("[handleWifiConnection] - Attempting connection to \"" + SSID + "\"");
+}
+
+void WifiModule::startAP()
+{
+  // Set the Host name to the device name
+  String hostName = Name != "" ? Name : defaultName;
+  hostName.replace(" ", "-");
+
+  // Debug
+  Serial.println("[handleWifiConnection] - No SSID given starting the software AP");
+
+  // Disconnect the WS if connected
+  webSocket.disconnect();
+
+  // Start the wifi in soft AP mode only
+  WiFi.mode(WIFI_AP);
+  WiFi.softAPConfig(accessPointIP, accessPointIP, IPAddress(255, 255, 255, 0));
+  if (Password != "")
+  {
+    WiFi.softAP(hostName, Password);
+  }
+  else
+  {
+    WiFi.softAP(hostName);
+  }
+  softApStarted = true;
+
+  // Set up captive DNS
+  captivePortalDNS.start(53, "*", accessPointIP);
+  captivePortalDNS.setErrorReplyCode(DNSReplyCode::NoError);
+}
 
 // mDNS Methods
 void WifiModule::mDNSInit()

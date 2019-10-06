@@ -1,5 +1,5 @@
-#ifndef _WIFI_H_
-#define _WIFI_H_
+#ifndef _WIFIMODULE_H_
+#define _WIFIMODULE_H_
 
 #include <Arduino.h>
 #include <DNSServer.h>
@@ -22,6 +22,8 @@ private:
     void onWifiConnected(const WiFiEventStationModeGotIP &event);
     void onWifiDisconnected(const WiFiEventStationModeDisconnected &event);
     void mDNSInit(void);
+    void startWifi(void);
+    void startAP(void);
 
 public:
     WifiModule(String defaultName);
