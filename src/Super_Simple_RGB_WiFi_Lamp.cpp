@@ -18,12 +18,14 @@
 //#include "lwip/dns.h"
 
 #include "globals.h"
+#include "NTPModule.h"
 
 String Name = DEFAULT_NAME; // The default Name of the Device
 
 bool spiffsCorrectSize = false;
 
 WifiModule *wifiModule = new WifiModule(DEFAULT_NAME);
+NTPModule *ntpModule = new NTPModule(UTC_OFFSET * 3600);
 
 // Setup Method - Runs only once before the main loop. Useful for setting things up
 void setup()
@@ -72,7 +74,7 @@ void loop()
     webSocket.loop();
 
     // Get the time when needed
-    handleNTP();
+    ntpModule->loop();
 
     // Update WS clients when needed
     updateClients();

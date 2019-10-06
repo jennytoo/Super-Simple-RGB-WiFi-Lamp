@@ -366,8 +366,8 @@ void parseConfig(JsonDocument &jsonMessage, bool sendViaWebsockets)
   {
     if (clockSettings.containsKey("Epoch"))
     {
-      clockSettings["Epoch"] = currentEpochTime = clockSettings["Epoch"] | currentEpochTime;
-      setTime(currentEpochTime);
+      clockSettings["Epoch"] = clockSettings["Epoch"] | now();
+      setTime(clockSettings["Epoch"]);
     }
 
     JsonVariant hourColourSettings = clockSettings["hourColour"];

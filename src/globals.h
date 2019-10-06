@@ -73,13 +73,13 @@ extern ESP8266HTTPUpdateServer OTAServer;
 extern WebSocketsServer webSocket;
 
 // NTP Variables and Objects
-extern bool ntpTimeSet;
-extern String ntpHostName;
-extern IPAddress ntpIpAddress;
-extern unsigned long utcOffset;
-extern unsigned long collectionPeriod;
-extern unsigned long currentEpochTime;
-extern unsigned long lastNTPCollectionTime;
+//extern bool ntpTimeSet;
+//extern String ntpHostName;
+//extern IPAddress ntpIpAddress;
+//extern unsigned long utcOffset;
+//extern unsigned long collectionPeriod;
+//extern unsigned long currentEpochTime;
+//extern unsigned long lastNTPCollectionTime;
 
 // LED string object and Variables
 extern int topNumLeds;

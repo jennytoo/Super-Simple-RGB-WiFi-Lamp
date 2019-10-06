@@ -234,7 +234,7 @@ void setRainbow(int startHue, int speed, int brightness)
 
 void setClock()
 {
-  if (ntpTimeSet)
+  if (timeStatus() != timeNotSet)
   {
     // Get the number of seconds between each LED
     int hourLedDeltaT = 43200 / (topNumLeds);
