@@ -55,7 +55,7 @@ bool sendConfigViaWS();
 #define DATA_PIN 5
 
 // Set the number of LED's - Simply count how many there are on your string and enter the number here
-#define NUM_LEDS 66
+#define NUM_LEDS 100
 
 // Set your UTC offset - This is the time zone you are in. for example +10 for Sydney or -4 for NYC
 #define UTC_OFFSET +10
