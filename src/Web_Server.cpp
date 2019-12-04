@@ -25,14 +25,25 @@ void webServerInit()
 
 void servePage()
 {
-  // Search and replace:
-  // find " and replace   \"                                    (no regex)
-  // find ^ and replace     restServer.sendContent_P(PSTR("     (regex)
-  // find $ and replace   \                                     (regex)
-  // find $ and replace   n"));                                 (regex)
-  // add  restServer.sendContent(String("            websock = new WebSocket('ws://' + " + WiFi.localIP().toString() + " + ':81/');\n"));
+  /*
+   * This file is generated from Website.html
+   *
+   * Two methods to generate this file:
+   *   1. Perform the search and replace below on Website.html
+   *   2. Run Website.sh
+   *
+   * Search and replace:
+   *   find " and replace   \"
+   *   find ^ and replace     restServer.sendContent_P(PSTR("
+   *   find $ and replace   \n"));
+   *
+   * As regex:
+   *   s/"/\\"/g
+   *   s/^/  restServer.sendContent_P(PSTR("/
+   *   s/$/\\n"));/
+   */
 
-  // Debyg
+  // Debug
   Serial.println("[servePage] - Serving webpage");
 
   restServer.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -83,6 +94,10 @@ void servePage()
   restServer.sendContent_P(PSTR("            let jsonMessage = JSON.parse(jsonString);\n"));
   restServer.sendContent_P(PSTR("            // console.log(jsonMessage)\n"));
   restServer.sendContent_P(PSTR("\n"));
+  restServer.sendContent_P(PSTR("            if (\"Name\" in jsonMessage) {\n"));
+  restServer.sendContent_P(PSTR("                // console.log(\"Found Name Message\")\n"));
+  restServer.sendContent_P(PSTR("                handleNameMessage(jsonMessage.Name)\n"));
+  restServer.sendContent_P(PSTR("            }\n"));
   restServer.sendContent_P(PSTR("            if (\"Mode\" in jsonMessage) {\n"));
   restServer.sendContent_P(PSTR("                // console.log(\"Found Mode Message\")\n"));
   restServer.sendContent_P(PSTR("                handleModeMessage(jsonMessage.Mode)\n"));
@@ -121,6 +136,12 @@ void servePage()
   restServer.sendContent_P(PSTR("            }\n"));
   restServer.sendContent_P(PSTR("        }\n"));
   restServer.sendContent_P(PSTR("\n"));
+  restServer.sendContent_P(PSTR("        function handleNameMessage(jsonMessage) {\n"));
+  restServer.sendContent_P(PSTR("            // console.log(jsonMessage)\n"));
+  restServer.sendContent_P(PSTR("            if (typeof jsonMessage === \"string\") {\n"));
+  restServer.sendContent_P(PSTR("                $(\"#NameInput\").val(jsonMessage)\n"));
+  restServer.sendContent_P(PSTR("            }\n"));
+  restServer.sendContent_P(PSTR("        }\n"));
   restServer.sendContent_P(PSTR("        function handleModeMessage(jsonMessage) {\n"));
   restServer.sendContent_P(PSTR("            // console.log(jsonMessage)\n"));
   restServer.sendContent_P(PSTR("            if (typeof jsonMessage === \"string\") {\n"));
@@ -282,7 +303,7 @@ void servePage()
   restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("        function handleNightRiderMessage(jsonMessage) {\n"));
   restServer.sendContent_P(PSTR("            if (typeof jsonMessage === \"object\") {\n"));
-  restServer.sendContent_P(PSTR("                \n"));
+  restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("            }\n"));
   restServer.sendContent_P(PSTR("        }\n"));
   restServer.sendContent_P(PSTR("\n"));
@@ -334,13 +355,13 @@ void servePage()
   restServer.sendContent_P(PSTR("            } else {\n"));
   restServer.sendContent_P(PSTR("                console.warn(\"Websockets are closed\")\n"));
   restServer.sendContent_P(PSTR("            }\n"));
-  restServer.sendContent_P(PSTR("        }       \n"));
+  restServer.sendContent_P(PSTR("        }\n"));
   restServer.sendContent_P(PSTR("    </script>\n"));
   restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("</head>\n"));
   restServer.sendContent_P(PSTR("\n"));
-  restServer.sendContent_P(PSTR("<!-- \n"));
-  restServer.sendContent_P(PSTR("    Off/On Button \n"));
+  restServer.sendContent_P(PSTR("<!--\n"));
+  restServer.sendContent_P(PSTR("    Off/On Button\n"));
   restServer.sendContent_P(PSTR("    Select Colour Button\n"));
   restServer.sendContent_P(PSTR("    Rainbow Button\n"));
   restServer.sendContent_P(PSTR("    Clock Button\n"));
@@ -433,7 +454,7 @@ void servePage()
   restServer.sendContent_P(PSTR("                            msgValue = false\n"));
   restServer.sendContent_P(PSTR("                            $(\"#stateButton\").val(\"OFF\")\n"));
   restServer.sendContent_P(PSTR("                            $(\"#stateButton\").html(\"Turn ON\")\n"));
-  restServer.sendContent_P(PSTR("                        } \n"));
+  restServer.sendContent_P(PSTR("                        }\n"));
   restServer.sendContent_P(PSTR("                        else if (currentState === \"ON\") {\n"));
   restServer.sendContent_P(PSTR("                            msgValue = true\n"));
   restServer.sendContent_P(PSTR("                            $(\"#stateButton\").val(\"ON\")\n"));
@@ -463,10 +484,10 @@ void servePage()
   restServer.sendContent_P(PSTR("                }\n"));
   restServer.sendContent_P(PSTR("            </script>\n"));
   restServer.sendContent_P(PSTR("            <hr>\n"));
-  restServer.sendContent_P(PSTR("        </div>     \n"));
+  restServer.sendContent_P(PSTR("        </div>\n"));
   restServer.sendContent_P(PSTR("        <div id=\"Home\" class=\"container tab-pane active\">\n"));
   restServer.sendContent_P(PSTR("            <h1>Home</h1>\n"));
-  restServer.sendContent_P(PSTR("            <p>Welocme to your RGB WiFi Lamp light web page! Here you can change the mode to one of the pre programmed ones below. Click any of the buttons to interact with the light.</p>\n"));
+  restServer.sendContent_P(PSTR("            <p>Welocme to your RGB WiFi Lamp web page! Here you can change the mode to one of the pre programmed ones below. Click any of the buttons to interact with the light.</p>\n"));
   restServer.sendContent_P(PSTR("            <button id=\"colourButton\" type=\"submit\" class=\"col mb-2 mx-2 btn btn-lg btn-outline-light\">Colour</button>\n"));
   restServer.sendContent_P(PSTR("            <button id=\"rainbowButton\" type=\"submit\"class=\"col mb-2 mx-2 btn btn-lg btn-outline-light\">Rainbow</button>\n"));
   restServer.sendContent_P(PSTR("            <button id=\"clockButton\" type=\"submit\" class=\"col mb-2 mx-2 btn btn-lg btn-outline-light\">Clock</button>\n"));
@@ -503,11 +524,11 @@ void servePage()
   restServer.sendContent_P(PSTR("            </script>\n"));
   restServer.sendContent_P(PSTR("        </div>\n"));
   restServer.sendContent_P(PSTR("        <div id=\"Colour\" class=\"container pb-5 tab-pane fade\">\n"));
-  restServer.sendContent_P(PSTR("            <!-- \n"));
+  restServer.sendContent_P(PSTR("            <!--\n"));
   restServer.sendContent_P(PSTR("                Colour Buttons\n"));
   restServer.sendContent_P(PSTR("                Warm Whites\n"));
   restServer.sendContent_P(PSTR("                brightness\n"));
-  restServer.sendContent_P(PSTR("                RGB Picker \n"));
+  restServer.sendContent_P(PSTR("                RGB Picker\n"));
   restServer.sendContent_P(PSTR("            -->\n"));
   restServer.sendContent_P(PSTR("            <h2>Colour Mode</h2>\n"));
   restServer.sendContent_P(PSTR("            <p>Here you can set the light to any colour you desire. There are also a couple of buttons for setting the\n"));
@@ -614,7 +635,7 @@ void servePage()
   restServer.sendContent_P(PSTR("            </Script>\n"));
   restServer.sendContent_P(PSTR("        </div>\n"));
   restServer.sendContent_P(PSTR("        <div id=\"Rainbow\" class=\"container pb-5 tab-pane fade\">\n"));
-  restServer.sendContent_P(PSTR("            <!-- \n"));
+  restServer.sendContent_P(PSTR("            <!--\n"));
   restServer.sendContent_P(PSTR("                Speed\n"));
   restServer.sendContent_P(PSTR("                Brightness\n"));
   restServer.sendContent_P(PSTR("            -->\n"));
@@ -657,10 +678,10 @@ void servePage()
   restServer.sendContent_P(PSTR("                });\n"));
   restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("                function onRainboWHueEvent() {\n"));
-  restServer.sendContent_P(PSTR("                    \n"));
+  restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("                    let currentHueValue = parseInt($(\"#rainbowHue\").val(), 10)\n"));
   restServer.sendContent_P(PSTR("                    let currentBrightnessValue = parseInt($(\"#rainbowBrightness\").val(), 10)\n"));
-  restServer.sendContent_P(PSTR("                    \n"));
+  restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("                    $(\"#rainbowSpeed\").val = 0;\n"));
   restServer.sendContent_P(PSTR("                    $(\"#rainbowSpeedLabel\").html(0)\n"));
   restServer.sendContent_P(PSTR("                    $(\"#rainbowHueLabel\").html(currentHueValue)\n"));
@@ -669,7 +690,7 @@ void servePage()
   restServer.sendContent_P(PSTR("                    msg = {\n"));
   restServer.sendContent_P(PSTR("                        \"State\" : true,\n"));
   restServer.sendContent_P(PSTR("                        \"Mode\" : \"Rainbow\",\n"));
-  restServer.sendContent_P(PSTR("                        \"Rainbow\": { \n"));
+  restServer.sendContent_P(PSTR("                        \"Rainbow\": {\n"));
   restServer.sendContent_P(PSTR("                            \"Hue\" : Math.round(currentHueValue/360*255),\n"));
   restServer.sendContent_P(PSTR("                            \"Speed\": 0,\n"));
   restServer.sendContent_P(PSTR("                            \"Brightness\": Math.round(currentBrightnessValue/100*255)\n"));
@@ -692,7 +713,7 @@ void servePage()
   restServer.sendContent_P(PSTR("                    msg = {\n"));
   restServer.sendContent_P(PSTR("                        \"State\" : true,\n"));
   restServer.sendContent_P(PSTR("                        \"Mode\" : \"Rainbow\",\n"));
-  restServer.sendContent_P(PSTR("                        \"Rainbow\": { \n"));
+  restServer.sendContent_P(PSTR("                        \"Rainbow\": {\n"));
   restServer.sendContent_P(PSTR("                            \"Speed\": currentSpeedValue,\n"));
   restServer.sendContent_P(PSTR("                            \"Brightness\": Math.round(currentBrightnessValue/100*255)\n"));
   restServer.sendContent_P(PSTR("                        }\n"));
@@ -706,10 +727,10 @@ void servePage()
   restServer.sendContent_P(PSTR("            </script>\n"));
   restServer.sendContent_P(PSTR("        </div>\n"));
   restServer.sendContent_P(PSTR("        <div id=\"Clock\" class=\"container pb-5 tab-pane fade\">\n"));
-  restServer.sendContent_P(PSTR("            <!-- \n"));
-  restServer.sendContent_P(PSTR("                Show system time  \n"));
+  restServer.sendContent_P(PSTR("            <!--\n"));
+  restServer.sendContent_P(PSTR("                Show system time\n"));
   restServer.sendContent_P(PSTR("                Resync Time Button\n"));
-  restServer.sendContent_P(PSTR("                Pick Hour Colour \n"));
+  restServer.sendContent_P(PSTR("                Pick Hour Colour\n"));
   restServer.sendContent_P(PSTR("                Pick Minute Colour\n"));
   restServer.sendContent_P(PSTR("            -->\n"));
   restServer.sendContent_P(PSTR("            <h2>Clock Mode</h2>\n"));
@@ -821,7 +842,7 @@ void servePage()
   restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("                            msg = {\n"));
   restServer.sendContent_P(PSTR("                                \"State\" : true,\n"));
-  restServer.sendContent_P(PSTR("                                \"Mode\" : \"Clock\", \n"));
+  restServer.sendContent_P(PSTR("                                \"Mode\" : \"Clock\",\n"));
   restServer.sendContent_P(PSTR("                                \"Clock\": {\n"));
   restServer.sendContent_P(PSTR("                                    \"hourColour\": {\n"));
   restServer.sendContent_P(PSTR("                                        \"Red\": red,\n"));
@@ -846,7 +867,7 @@ void servePage()
   restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("                            msg = {\n"));
   restServer.sendContent_P(PSTR("                                \"State\" : true,\n"));
-  restServer.sendContent_P(PSTR("                                \"Mode\" : \"Clock\", \n"));
+  restServer.sendContent_P(PSTR("                                \"Mode\" : \"Clock\",\n"));
   restServer.sendContent_P(PSTR("                                \"Clock\": {\n"));
   restServer.sendContent_P(PSTR("                                    \"minColour\": {\n"));
   restServer.sendContent_P(PSTR("                                        \"Red\": red,\n"));
@@ -913,7 +934,7 @@ void servePage()
   restServer.sendContent_P(PSTR("                    if (bellRed != red || bellGreen != green || bellBlue != blue) {\n"));
   restServer.sendContent_P(PSTR("                        msg = {\n"));
   restServer.sendContent_P(PSTR("                            \"State\" : true,\n"));
-  restServer.sendContent_P(PSTR("                            \"Mode\" : \"Bell Curve\", \n"));
+  restServer.sendContent_P(PSTR("                            \"Mode\" : \"Bell Curve\",\n"));
   restServer.sendContent_P(PSTR("                            \"Bell Curve\": {\n"));
   restServer.sendContent_P(PSTR("                                \"Red\": red,\n"));
   restServer.sendContent_P(PSTR("                                \"Green\": green,\n"));
@@ -932,13 +953,13 @@ void servePage()
   restServer.sendContent_P(PSTR("        </div>\n"));
   restServer.sendContent_P(PSTR("        <div id=\"NightRider\" class=\"container pb-5 tab-pane fade\">\n"));
   restServer.sendContent_P(PSTR("            <h2>Night Rider Mode</h2>\n"));
-  restServer.sendContent_P(PSTR("            <p>Knight Rider. A shadowy flight into the dangerous world of a man who does not exist. \n"));
-  restServer.sendContent_P(PSTR("                Michael Knight: a young loner on a crusade to champion the cause of the innocent, \n"));
+  restServer.sendContent_P(PSTR("            <p>Knight Rider. A shadowy flight into the dangerous world of a man who does not exist.\n"));
+  restServer.sendContent_P(PSTR("                Michael Knight: a young loner on a crusade to champion the cause of the innocent,\n"));
   restServer.sendContent_P(PSTR("                the helpless, the powerless, in a world of criminals who operate above the law.</p>\n"));
   restServer.sendContent_P(PSTR("        </div>\n"));
   restServer.sendContent_P(PSTR("        <div id=\"WfiConfig\" class=\"container pb-5 tab-pane fade\">\n"));
-  restServer.sendContent_P(PSTR("            <!-- \n"));
-  restServer.sendContent_P(PSTR("                Wifi Table \n"));
+  restServer.sendContent_P(PSTR("            <!--\n"));
+  restServer.sendContent_P(PSTR("                Wifi Table\n"));
   restServer.sendContent_P(PSTR("                Rescan Button\n"));
   restServer.sendContent_P(PSTR("                form box\n"));
   restServer.sendContent_P(PSTR("                Disconnect Button - when connected\n"));
@@ -964,6 +985,10 @@ void servePage()
   restServer.sendContent_P(PSTR("            <button id=\"rescanButton\" class=\"col mb-2 mx-2 btn btn-lg btn-outline-light\">Rescan</button>\n"));
   restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("            <div id=\"wifiConfigForm\">\n"));
+  restServer.sendContent_P(PSTR("                <div class=\"form-group\">\n"));
+  restServer.sendContent_P(PSTR("                    <label for=\"NameInput\">Name</label>\n"));
+  restServer.sendContent_P(PSTR("                    <input id=\"NameInput\" class=\"form-control\" placeholder=\"Name\" type=\"text\">\n"));
+  restServer.sendContent_P(PSTR("                </div>\n"));
   restServer.sendContent_P(PSTR("                <div class=\"form-group\">\n"));
   restServer.sendContent_P(PSTR("                    <label for=\"SSIDInput\">SSID</label>\n"));
   restServer.sendContent_P(PSTR("                    <input id=\"SSIDInput\" class=\"form-control\" placeholder=\"SSID\" type=\"text\">\n"));
@@ -1000,6 +1025,7 @@ void servePage()
   restServer.sendContent_P(PSTR("\n"));
   restServer.sendContent_P(PSTR("                function onSubmitWifiEvent() {\n"));
   restServer.sendContent_P(PSTR("                    msg = {\n"));
+  restServer.sendContent_P(PSTR("                        \"Name\": $(\"#NameInput\").val(),\n"));
   restServer.sendContent_P(PSTR("                        \"Wifi\": {\n"));
   restServer.sendContent_P(PSTR("                            \"SSID\": $(\"#SSIDInput\").val(),\n"));
   restServer.sendContent_P(PSTR("                            \"Password\": $(\"#PassInput\").val()\n"));

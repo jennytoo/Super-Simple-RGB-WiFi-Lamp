@@ -40,6 +40,10 @@
             let jsonMessage = JSON.parse(jsonString);
             // console.log(jsonMessage)
 
+            if ("Name" in jsonMessage) {
+                // console.log("Found Name Message")
+                handleNameMessage(jsonMessage.Name)
+            }
             if ("Mode" in jsonMessage) {
                 // console.log("Found Mode Message")
                 handleModeMessage(jsonMessage.Mode)
@@ -78,6 +82,12 @@
             }
         }
 
+        function handleNameMessage(jsonMessage) {
+            // console.log(jsonMessage)
+            if (typeof jsonMessage === "string") {
+                $("#NameInput").val(jsonMessage)
+            }
+        }
         function handleModeMessage(jsonMessage) {
             // console.log(jsonMessage)
             if (typeof jsonMessage === "string") {
@@ -239,7 +249,7 @@
 
         function handleNightRiderMessage(jsonMessage) {
             if (typeof jsonMessage === "object") {
-                
+
             }
         }
 
@@ -291,13 +301,13 @@
             } else {
                 console.warn("Websockets are closed")
             }
-        }       
+        }
     </script>
 
 </head>
 
-<!-- 
-    Off/On Button 
+<!--
+    Off/On Button
     Select Colour Button
     Rainbow Button
     Clock Button
@@ -390,7 +400,7 @@
                             msgValue = false
                             $("#stateButton").val("OFF")
                             $("#stateButton").html("Turn ON")
-                        } 
+                        }
                         else if (currentState === "ON") {
                             msgValue = true
                             $("#stateButton").val("ON")
@@ -420,7 +430,7 @@
                 }
             </script>
             <hr>
-        </div>     
+        </div>
         <div id="Home" class="container tab-pane active">
             <h1>Home</h1>
             <p>Welocme to your RGB WiFi Lamp web page! Here you can change the mode to one of the pre programmed ones below. Click any of the buttons to interact with the light.</p>
@@ -460,11 +470,11 @@
             </script>
         </div>
         <div id="Colour" class="container pb-5 tab-pane fade">
-            <!-- 
+            <!--
                 Colour Buttons
                 Warm Whites
                 brightness
-                RGB Picker 
+                RGB Picker
             -->
             <h2>Colour Mode</h2>
             <p>Here you can set the light to any colour you desire. There are also a couple of buttons for setting the
@@ -571,7 +581,7 @@
             </Script>
         </div>
         <div id="Rainbow" class="container pb-5 tab-pane fade">
-            <!-- 
+            <!--
                 Speed
                 Brightness
             -->
@@ -614,10 +624,10 @@
                 });
 
                 function onRainboWHueEvent() {
-                    
+
                     let currentHueValue = parseInt($("#rainbowHue").val(), 10)
                     let currentBrightnessValue = parseInt($("#rainbowBrightness").val(), 10)
-                    
+
                     $("#rainbowSpeed").val = 0;
                     $("#rainbowSpeedLabel").html(0)
                     $("#rainbowHueLabel").html(currentHueValue)
@@ -626,7 +636,7 @@
                     msg = {
                         "State" : true,
                         "Mode" : "Rainbow",
-                        "Rainbow": { 
+                        "Rainbow": {
                             "Hue" : Math.round(currentHueValue/360*255),
                             "Speed": 0,
                             "Brightness": Math.round(currentBrightnessValue/100*255)
@@ -649,7 +659,7 @@
                     msg = {
                         "State" : true,
                         "Mode" : "Rainbow",
-                        "Rainbow": { 
+                        "Rainbow": {
                             "Speed": currentSpeedValue,
                             "Brightness": Math.round(currentBrightnessValue/100*255)
                         }
@@ -663,10 +673,10 @@
             </script>
         </div>
         <div id="Clock" class="container pb-5 tab-pane fade">
-            <!-- 
-                Show system time  
+            <!--
+                Show system time
                 Resync Time Button
-                Pick Hour Colour 
+                Pick Hour Colour
                 Pick Minute Colour
             -->
             <h2>Clock Mode</h2>
@@ -778,7 +788,7 @@
 
                             msg = {
                                 "State" : true,
-                                "Mode" : "Clock", 
+                                "Mode" : "Clock",
                                 "Clock": {
                                     "hourColour": {
                                         "Red": red,
@@ -803,7 +813,7 @@
 
                             msg = {
                                 "State" : true,
-                                "Mode" : "Clock", 
+                                "Mode" : "Clock",
                                 "Clock": {
                                     "minColour": {
                                         "Red": red,
@@ -870,7 +880,7 @@
                     if (bellRed != red || bellGreen != green || bellBlue != blue) {
                         msg = {
                             "State" : true,
-                            "Mode" : "Bell Curve", 
+                            "Mode" : "Bell Curve",
                             "Bell Curve": {
                                 "Red": red,
                                 "Green": green,
@@ -889,13 +899,13 @@
         </div>
         <div id="NightRider" class="container pb-5 tab-pane fade">
             <h2>Night Rider Mode</h2>
-            <p>Knight Rider. A shadowy flight into the dangerous world of a man who does not exist. 
-                Michael Knight: a young loner on a crusade to champion the cause of the innocent, 
+            <p>Knight Rider. A shadowy flight into the dangerous world of a man who does not exist.
+                Michael Knight: a young loner on a crusade to champion the cause of the innocent,
                 the helpless, the powerless, in a world of criminals who operate above the law.</p>
         </div>
         <div id="WfiConfig" class="container pb-5 tab-pane fade">
-            <!-- 
-                Wifi Table 
+            <!--
+                Wifi Table
                 Rescan Button
                 form box
                 Disconnect Button - when connected
@@ -921,6 +931,10 @@
             <button id="rescanButton" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Rescan</button>
 
             <div id="wifiConfigForm">
+                <div class="form-group">
+                    <label for="NameInput">Name</label>
+                    <input id="NameInput" class="form-control" placeholder="Name" type="text">
+                </div>
                 <div class="form-group">
                     <label for="SSIDInput">SSID</label>
                     <input id="SSIDInput" class="form-control" placeholder="SSID" type="text">
@@ -957,6 +971,7 @@
 
                 function onSubmitWifiEvent() {
                     msg = {
+                        "Name": $("#NameInput").val(),
                         "Wifi": {
                             "SSID": $("#SSIDInput").val(),
                             "Password": $("#PassInput").val()
