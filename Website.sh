@@ -34,7 +34,7 @@ void sendWebsite(ESP8266WebServer &restServer) {
   restServer.sendHeader("Pragma", "no-cache");
   restServer.sendHeader("Expires", "-1");
   restServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  restServer.send(200, "text/html", "");
+  restServer.send(200, "text/html", String(""));
 
   // Begin Website.html
 EOF
