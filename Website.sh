@@ -29,13 +29,7 @@ cat > src/Website.h <<EOF
  *   s/$/\\\\n"));/
  */
 
-void sendWebsite(ESP8266WebServer &restServer) {
-  restServer.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  restServer.sendHeader("Pragma", "no-cache");
-  restServer.sendHeader("Expires", "-1");
-  restServer.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  restServer.send(200, "text/html", String(""));
-
+void sendStaticBody(ESP8266WebServer &restServer) {
   // Begin Website.html
 EOF
 
@@ -46,9 +40,7 @@ sed -e '
 
 cat >> src/Website.h <<EOF
   // End Website.html
-
   restServer.sendContent("");
-  restServer.client().stop();
 };
 #endif
 EOF

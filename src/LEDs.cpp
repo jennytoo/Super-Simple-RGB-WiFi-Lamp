@@ -2,6 +2,7 @@
 #define FASTLED_ESP8266_RAW_PIN_ORDER
 #include <FastLED.h>
 #include "globals.h"
+#include <LEDModeFireflies.h>
 
 // Set up LED's for each side - These arrays hold which leds are on what sides. For the basic rectangular shape in the example this relates to 4
 // sides and 4 arrays. You must subract 1 off the count of the LED when entering it as the array is 0 based. For example the first LED on the
@@ -58,11 +59,20 @@ int nightRiderBottomLedNumber = 0;
 int nightRiderTopIncrement = 1;
 int nightRiderBottomIncrement = 1;
 
+// Fireflies Mode Variables
+LEDModeFireflies ledModeFireflies(ledString);
+unsigned int firefliesMinimumFlashDelay = 1000;
+unsigned int firefliesMaximumFlashDelay = 5000;
+int firefliesFlashLength = 1500;
+int firefliesBrightness = 255;
+int firefliesHue = 160;
+
 void setColour(int red, int green, int blue);
 void setRainbow(int startHue, int speed, int brightness);
 void setClock();
 void setBellCurve();
 void setNightRider();
+void setFireflies();
 
 void ledStringInit()
 {
@@ -101,6 +111,10 @@ void handleMode()
   {
     setNightRider();
   }
+  else if (currentMode == "Fireflies")
+  {
+    setFireflies();
+  }
 
   // Adjust the brightness depending on the mode
   if (Mode != currentMode)
@@ -116,6 +130,12 @@ void handleMode()
     }
     else
     {
+      // Reset twinkle state
+      if (Mode == "Fireflies")
+      {
+        ledModeFireflies.reset();
+      }
+
       // Debug
       Serial.println("[handleMode] - Mode changed to: " + Mode);
 
@@ -206,7 +226,7 @@ void setRainbow(int startHue, int speed, int brightness)
   speed = speed > 0 ? speed : 0;
   brightness = constrain(brightness, 0, 255);
 
-  // Update the hue by 1 every 360th of the allocated time
+  // Update the hue by 1 every 256th of the allocated time
   if (speed > 0)
   {
     float rainbowDeltaHue = (255 / ((float)speed * 1000)) * 50;
@@ -339,4 +359,16 @@ void setNightRider()
     // Start fading all lit leds
     fadeToBlackBy(ledString, NUM_LEDS, 10);
   };
+}
+
+void setFireflies()
+{
+  // TODO: Delegate setting management directly to mode handler. Workaround for now.
+  ledModeFireflies.setMinimumFlashDelay(firefliesMinimumFlashDelay);
+  ledModeFireflies.setMaximumFlashDelay(firefliesMaximumFlashDelay);
+  ledModeFireflies.setFlashLength(firefliesFlashLength);
+  ledModeFireflies.setHue(firefliesHue);
+  ledModeFireflies.setBrightness(firefliesBrightness);
+
+  ledModeFireflies.loop();
 }

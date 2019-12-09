@@ -76,6 +76,10 @@
                 // console.log("Found Night Rider Message")
                 handleNightRiderMessage(jsonMessage["Night Rider"])
             }
+            if ("Fireflies" in jsonMessage) {
+                // console.log("Found Fireflies Message")
+                handleNightRiderMessage(jsonMessage["Fireflies"])
+            }
             if ("Wifi" in jsonMessage) {
                 // console.log("Found Wifi Message")
                 handleWifiMessage(jsonMessage.Wifi)
@@ -341,6 +345,9 @@
                     <li id="nightRiderTabNavItem" class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#NightRider">Night Rider</a>
                     </li>
+                    <li id="firefliesTabNavItem" class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#Fireflies">Fireflies</a>
+                    </li>
                     <li id="wifiTabNavItem" class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#WfiConfig">Wifi</a>
                     </li>
@@ -360,6 +367,9 @@
                     });
                     $("#nightRiderTabNavItem").click(function () {
                         sendMessage({"Mode":"Night Rider"})
+                    });
+                    $("#firefliesTabNavItem").click(function () {
+                        sendMessage({"Mode":"Fireflies"})
                     });
                 </script>
             </div>
@@ -433,12 +443,13 @@
         </div>
         <div id="Home" class="container tab-pane active">
             <h1>Home</h1>
-            <p>Welocme to your RGB WiFi Lamp web page! Here you can change the mode to one of the pre programmed ones below. Click any of the buttons to interact with the light.</p>
+            <p>Welcome to your RGB WiFi Lamp web page! Here you can change the mode to one of the pre programmed ones below. Click any of the buttons to interact with the light.</p>
             <button id="colourButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Colour</button>
             <button id="rainbowButton" type="submit"class="col mb-2 mx-2 btn btn-lg btn-outline-light">Rainbow</button>
             <button id="clockButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Clock</button>
             <button id="bellCurveButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Bell Curve</button>
             <button id="nightRiderButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Night Rider</button>
+            <button id="firefliesButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Fireflies</button>
             <button id="wifiButton" type="submit" class="col mb-2 mx-2 btn btn-lg btn-outline-light">Wifi Config</button>
             <script>
                 $("#HomeButton").click(function () {
@@ -463,6 +474,10 @@
                 $("#nightRiderButton").click(function () {
                     $('#navbarHeader a[href="#NightRider"]').tab('show')
                     sendMessage({"Mode":"Night Rider"})
+                });
+                $("#firefliesButton").click(function () {
+                    $('#navbarHeader a[href="#Fireflies"]').tab('show')
+                    sendMessage({"Mode":"Fireflies"})
                 });
                 $("#wifiButton").click(function () {
                     $('#navbarHeader a[href="#WfiConfig"]').tab('show')
@@ -903,6 +918,101 @@
                 Michael Knight: a young loner on a crusade to champion the cause of the innocent,
                 the helpless, the powerless, in a world of criminals who operate above the law.</p>
         </div>
+        <div id="Fireflies" class="container pb-5 tab-pane fade">
+            <h2>Fireflies Mode</h2>
+            <p>Here come real stars to fill the upper skies,
+               And here on earth come emulating flies,
+               That though they never equal stars in size,
+               (And they were never really stars at heart)
+               Achieve at times a very star-like start.
+               Only, of course, they can't sustain the part.
+               -- Robert Frost, "Fireflies in the Garden"</p>
+            <div>
+                <label for="firefliesHue">Hue: <span id="firefliesHueLabel">0</span> Degrees</label>
+                <input id="firefliesHue" type="range" min="0" max="359" step="1" value="0" class="form-control-range">
+            </div>
+            <div>
+                <label for="firefliesBrightness">Brightness: <span id="firefliesBrightnessLabel">100</span>%</label>
+                <input id="firefliesBrightness" type="range" min="0" max="100" step="1" value="100" class="form-control-range">
+            </div>
+            <div>
+                <label for="firefliesMinimumFlashDelay">Minimum Flash Delay: <span id="firefliesMinimumFlashDelayLabel">1000</span> milliseconds</label>
+                <input id="firefliesMinimumFlashDelay" type="range" min="0" max="30000" step="100" value="1000" class="form-control-range">
+            </div>
+            <div>
+                <label for="firefliesMaximumFlashDelay">Maximum Flash Delay: <span id="firefliesMaximumFlashDelayLabel">5000</span> milliseconds</label>
+                <input id="firefliesMaximumFlashDelay" type="range" min="0" max="30000" step="100" value="5000" class="form-control-range">
+            </div>
+            <div>
+                <label for="firefliesFlashLength">Flash Length: <span id="firefliesFlashLengthLabel">500</span> milliseconds</label>
+                <input id="firefliesFlashLength" type="range" min="0" max="15000" step="50" value="500" class="form-control-range">
+            </div>
+            <script>
+                var firefliesDebunce = Date.now()
+
+                $("#firefliesHue").on("input", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesHue").on("change", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesBrightness").on("input", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesBrightness").on("change", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesMinimumFlashDelay").on("input", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesMinimumFlashDelay").on("change", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesMaximumFlashDelay").on("input", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesMaximumFlashDelay").on("change", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesFlashLength").on("input", function () {
+                    onfirefliesEvent()
+                });
+                $("#firefliesFlashLength").on("change", function () {
+                    onfirefliesEvent()
+                });
+
+                function onfirefliesEvent() {
+                    let currentHueValue = parseInt($("#firefliesHue").val(), 10)
+                    let currentBrightnessValue = parseInt($("#firefliesBrightness").val(), 10)
+                    let currentMinimumFlashDelay = parseInt($("#firefliesMinimumFlashDelay").val(), 10)
+                    let currentMaximumFlashDelay = parseInt($("#firefliesMaximumFlashDelay").val(), 10)
+                    let currentFlashLength = parseInt($("#firefliesFlashLength").val(), 10)
+
+                    $("#firefliesHueLabel").html(currentHueValue)
+                    $("#firefliesBrightnessLabel").html(currentBrightnessValue)
+                    $("#firefliesMinimumFlashDelayLabel").html(currentMinimumFlashDelay)
+                    $("#firefliesMaximumFlashDelayLabel").html(currentMaximumFlashDelay)
+                    $("#firefliesFlashLengthLabel").html(currentFlashLength)
+
+                    msg = {
+                        "State" : true,
+                        "Mode" : "Fireflies",
+                        "Fireflies": {
+                            "Hue" : Math.round(currentHueValue/359*255),
+                            "Brightness": Math.round(currentBrightnessValue/100*255),
+                            "MinimumFlashDelay": currentMinimumFlashDelay,
+                            "MaximumFlashDelay": currentMaximumFlashDelay,
+                            "FlashLength": currentFlashLength
+                        }
+                    }
+
+                    if (Date.now() - firefliesDebunce > 50) {
+                        firefliesDebunce = Date.now()
+                        sendMessage(msg)
+                    }
+                }
+            </script>
+        </div>
         <div id="WfiConfig" class="container pb-5 tab-pane fade">
             <!--
                 Wifi Table
@@ -990,5 +1100,4 @@
         </div>
     </div>
 </body>
-
 </html>

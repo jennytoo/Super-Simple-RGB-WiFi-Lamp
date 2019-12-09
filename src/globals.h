@@ -133,4 +133,11 @@ extern int nightRiderTopLedNumber;
 extern int nightRiderBottomLedNumber;
 extern int nightRiderTopIncrement;
 extern int nightRiderBottomIncrement;
+
+// Fireflies Mode Variables
+extern unsigned int firefliesMinimumFlashDelay;
+extern unsigned int firefliesMaximumFlashDelay;
+extern int firefliesFlashLength;
+extern int firefliesBrightness;
+extern int firefliesHue;
 #endif

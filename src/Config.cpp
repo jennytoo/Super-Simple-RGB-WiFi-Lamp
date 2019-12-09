@@ -285,8 +285,10 @@ void parseConfig(JsonDocument &jsonMessage, bool sendViaWebsockets)
       "Blue": 0
     },
     "Night Rider" : {
-      
     },
+    "Fireflies": {
+      ...
+    }
     "Wifi": {
       "SSID": "Test",
       "Password": "Test"
@@ -401,6 +403,16 @@ void parseConfig(JsonDocument &jsonMessage, bool sendViaWebsockets)
   if (nightRiderSettings)
   {
     // Currently no Night Rider Settings
+  }
+
+  JsonVariant firefliesSettings = jsonSettingsObject["Fireflies"];
+  if (firefliesSettings)
+  {
+    firefliesSettings["MinimumFlashDelay"] = firefliesMinimumFlashDelay = firefliesSettings["MinimumFlashDelay"] | firefliesMinimumFlashDelay;
+    firefliesSettings["MaximumFlashDelay"] = firefliesMaximumFlashDelay = firefliesSettings["MaximumFlashDelay"] | firefliesMaximumFlashDelay;
+    firefliesSettings["FlashLength"] = firefliesFlashLength = firefliesSettings["FlashLength"] | firefliesFlashLength;
+    firefliesSettings["Brightness"] = firefliesBrightness = firefliesSettings["Brightness"] | firefliesBrightness;
+    firefliesSettings["Hue"] = firefliesHue = firefliesSettings["Hue"] | firefliesHue;
   }
 
   // Debug

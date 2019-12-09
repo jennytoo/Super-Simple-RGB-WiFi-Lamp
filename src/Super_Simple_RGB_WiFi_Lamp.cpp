@@ -67,6 +67,8 @@ void loop()
   // Check if the flash was correctly setup
   if (spiffsCorrectSize)
   {
+    // Serial.println("Loop Time: " + String(millis()));
+
     // Handle the webserver
     restServer.handleClient();
 
