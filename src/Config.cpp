@@ -287,8 +287,12 @@ void parseConfig(JsonDocument &jsonMessage, bool sendViaWebsockets)
     "Night Rider" : {
     },
     "Fireflies": {
-      ...
-    }
+      "MinimumFlashDelay": 0,
+      "MaximumFlashDelay": 0,
+      "FlashLength": 0,
+      "Brightness": 0,
+      "Hue": 0
+    },
     "Wifi": {
       "SSID": "Test",
       "Password": "Test"
