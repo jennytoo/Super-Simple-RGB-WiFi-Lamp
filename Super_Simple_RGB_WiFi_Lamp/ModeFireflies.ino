@@ -13,18 +13,13 @@ private:
     uint8_t brightness = 255;
     uint8_t hue = 160;
 
-    unsigned int flashDelay()
-    {
-        return random16(minimumFlashDelay, maximumFlashDelay);
-    }
-
 public:
     ModeFireflies()
     {
-        unsigned long now = millis();
+        unsigned long initialBaseTime = millis() - flashLength;
         for (int i = 0; i < NUM_LEDS; i++)
         {
-            nextFlash[i] = now + flashDelay();
+            nextFlash[i] = initialBaseTime + random16(maximumFlashDelay + flashLength);
         }
     }
 
@@ -45,7 +40,7 @@ public:
                 }
                 else if (flashTime > flashLength)
                 {
-                    nextFlash[i] = now + flashDelay();
+                    nextFlash[i] = now + random16(minimumFlashDelay, maximumFlashDelay);
                     value = 0;
                 }
                 else if (true)
