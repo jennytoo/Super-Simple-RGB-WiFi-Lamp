@@ -325,11 +325,32 @@ class Twinkle(Mode):
       state.step -= 1
 
 
+class SaturationFader(Mode):
+  def __init__(self, *args, **kwargs):
+    '''
+    Configuration values:
+      hue: LED Hue
+    '''
+    super(SaturationFader, self).__init__(*args, **kwargs)
+
+    self.offset = 0
+    self.hue = kwargs.get('hue', random.randint(0, 359))
+    self.step = float(len(self.leds)) / 100
+
+  def loop(self):
+    '''Process one single loop'''
+    for index in xrange(len(self.leds)):
+      saturation = int((math.sin(2 * math.pi / 100 * (index + self.offset)) * 50) + 50.5)
+      self.leds[index].hsv(self.hue, saturation, 100)
+    self.offset = (self.offset + 1) % len(self.leds)
+
+
 def main():
   '''Main routine'''
   leds = LEDString(100)
 
-  mode = Twinkle(leds)
+  #mode = Twinkle(leds)
+  mode = SaturationFader(leds)
 
   while True:
     mode.loop()
