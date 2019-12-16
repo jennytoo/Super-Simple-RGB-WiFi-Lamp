@@ -1,5 +1,6 @@
 // Included Libraries
 #define FASTLED_ESP8266_RAW_PIN_ORDER
+// #define FASTLED_INTERRUPT_RETRY_COUNT 1
 #include "user_interface.h"
 #include <FastLED.h>
 #include "FS.h"
@@ -37,7 +38,7 @@
 
 // Set the chipset and color order for the LEDs you are using. For more info on supported hardware see: https://github.com/FastLED/FastLED/wiki/Overview#supported-chipsets.
 #define CHIPSET WS2812B
-#define COLOR_ORDER GRB
+#define COLOR_ORDER RGB
 
 // Set up LED's for each side - These arrays hold which leds are on what sides. For the basic rectangular shape in the example this relates to 4
 // sides and 4 arrays. You must subract 1 off the count of the LED when entering it as the array is 0 based. For example the first LED on the
